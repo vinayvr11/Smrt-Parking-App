@@ -1,13 +1,7 @@
 package org.tensorflow.lite.examples.detection;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,15 +9,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class UserForm extends AppCompatActivity {
 
@@ -53,15 +44,9 @@ public class UserForm extends AppCompatActivity {
         viewInfo();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("message");
         detectorActivity = new DetectorActivity();
-
-
-
     }
 
-
-
-
-    public void formText(){
+    public void formText() {
         EditText editText = (EditText) findViewById(R.id.parkinName);
         parkingName = editText.getText().toString();
         EditText editText1 = (EditText) findViewById(R.id.parkingRent);
@@ -70,50 +55,44 @@ public class UserForm extends AppCompatActivity {
         parkingCapacity = editText2.getText().toString();
     }
 
-    public void submitForm(){
+    public void submitForm() {
         Button formButton = (Button) findViewById(R.id.submitForm);
         formButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 formText();
-                if(data.insertData(parkingName,parkingRent,parkingCapacity)){
-                    Log.d("Data Insertion","Data insertion successfull");
-                    Toast.makeText(UserForm.this,"Data Stored",Toast.LENGTH_SHORT).show();
-                }else{
-                    Log.d("Data Insertion Fail","Data insertion Fail");
+                if (data.insertData(parkingName, parkingRent, parkingCapacity)) {
+                    Log.d("Data Insertion", "Data insertion successfull");
+                    Toast.makeText(UserForm.this, "Data Stored", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d("Data Insertion Fail", "Data insertion Fail");
                 }
             }
         });
     }
 
-
-    public void viewInfo(){
+    public void viewInfo() {
         Button infoButton = (Button) findViewById(R.id.information);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Cursor res = data.getData();
 
-
                 StringBuffer buffer = new StringBuffer();
-                while(res.moveToNext()) {
-                    map.put("parkingName",res.getString(1));
-                    map.put("parkingRent",res.getString(2));
-                    map.put("parkingCapacity",res.getString(3));
+                while (res.moveToNext()) {
+                    map.put("parkingName", res.getString(0));
+                    map.put("parkingRent", res.getString(1));
+                    map.put("parkingCapacity", res.getString(2));
                     //Log.d("parking","parking"+res.getString(3));
 
                 }
-                textView.setText(buffer);
+                String infoText = "Parking Name: " + map.get("parkingName") + "\n"
+                        + "Parging Rent: " + map.get("parkingRent") + "\n"
+                        + "Parging Capacity:" + map.get("parkingCapacity");
+                textView.setText(infoText);
 
                 Log.d("Data Worked", String.valueOf(buffer));
-
             }
         });
-
     }
-
-
-
-
-
 }
